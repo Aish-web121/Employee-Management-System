@@ -1,16 +1,18 @@
-# Stage 1: Build React app
+# Stage 1: Build React app (Vite)
 FROM node:18-alpine AS build
 
 WORKDIR /app
 COPY package*.json ./
 RUN npm install
 COPY . .
-RUN npm run build
+
+RUN npm run build  # <- Creates /dist folder
 
 # Stage 2: Serve with Nginx
 FROM nginx:stable-alpine
 
-COPY --from=build /app/build /usr/share/nginx/html
-EXPOSE 3000
+COPY --from=build /app/dist /usr/share/nginx/html
+
+EXPOSE 80
 
 CMD ["nginx", "-g", "daemon off;"]
